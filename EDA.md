@@ -180,7 +180,163 @@ El proyecto actual incluye:
 
 ---
 
-## 8. Siguientes pasos sugeridos
+## 8. Ejercicio 2: validación de subida sin ignorar una carpeta
+
+Se realizó una prueba adicional para confirmar que una carpeta no ignorada se sube normalmente a GitHub.
+
+### Paso realizado
+
+1. Se creó la carpeta `datos_prueba/`
+2. Se agregó un archivo dentro: `datos_prueba/archivo.txt`
+3. Se ejecutó `git add .`
+4. Se ejecutó `git commit -m "Agregar carpeta datos_prueba"`
+5. Se ejecutó `git push origin main`
+
+### Resultado verificado
+
+La operación fue exitosa y Git mostró el siguiente resultado:
+
+- commit creado: `Agregar carpeta datos_prueba`
+- archivo agregado: `datos_prueba/archivo.txt`
+- push realizado correctamente a GitHub
+
+Esto confirma que, cuando una carpeta no está en `.gitignore`, Git la incorpora al repositorio y la sube correctamente.
+
+---
+
+## 9. Ejercicios prácticos de Git y GitHub
+
+A continuación se detallan los tres ejercicios realizados y la explicación paso a paso de cada uno.
+
+### Ejercicio 1: repositorio con README y conflicto de sincronización
+
+Este ejercicio consistió en crear un repositorio en GitHub con README y luego tratar de conectarlo a un repositorio local distinto creado con `git init`.
+
+#### Pasos ejecutados
+
+1. Crear repo nuevo en GitHub con README.
+2. Hacer `git init` en una carpeta local distinta.
+3. Crear un archivo y hacer `git add` + `git commit`.
+4. Conectar con `git remote add origin ...`.
+5. Intentar `git push origin main`.
+6. Si aparece el error de historial distinto, ejecutar:
+
+```bash
+git fetch origin
+git pull --rebase origin main
+```
+
+7. Resolver conflictos si existen y continuar con:
+
+```bash
+git add .
+git rebase --continue
+git push origin main
+```
+
+#### Aprendizaje
+
+El problema no estaba en la carpeta virtual, sino en que el repositorio remoto ya tenía un historial distinto del local. Git bloquea el push para evitar mezclar historiales incompatibles.
+
+---
+
+### Ejercicio 2: carpeta no ignorada se sube a GitHub
+
+Este ejercicio buscó confirmar que una carpeta no ignorada sí se sube correctamente al repositorio.
+
+#### Pasos ejecutados
+
+```bash
+mkdir datos_prueba
+cd datos_prueba
+"archivo de prueba" > archivo.txt
+```
+
+Luego, desde la raíz del proyecto:
+
+```bash
+git add .
+git commit -m "Agregar carpeta datos_prueba"
+git push origin main
+```
+
+#### Resultado verificado
+
+La carpeta y el archivo fueron incluidos en el commit y subidos con éxito a GitHub.
+
+Esto demostró que, si la carpeta no está en `.gitignore`, Git la envía normalmente.
+
+Luego se ejecutó esta corrección para que no vuelva a ocurrir:
+
+```bash
+git rm -r --cached datos_prueba
+git commit -m "dejar de trackear datos_prueba"
+git push
+```
+
+Y finalmente se agregó al `.gitignore`:
+
+```gitignore
+datos_prueba/
+~$*
+```
+
+---
+
+### Ejercicio 3: conflicto entre master y main
+
+Este ejercicio se centró en cuando el repositorio local se crea con la rama `master`, pero GitHub usa `main` por defecto.
+
+#### Pasos para probarlo
+
+```bash
+git config --global init.defaultBranch master
+mkdir prueba-rama
+cd prueba-rama
+git init
+```
+
+Crear archivo inicial:
+
+```bash
+echo "# prueba-rama" > README.md
+git add README.md
+git commit -m "commit inicial"
+```
+
+Crear repositorio vacío en GitHub y conectarlo:
+
+```bash
+git remote add origin https://github.com/TU_USUARIO/mi-repo.git
+```
+
+Intentar subir:
+
+```bash
+git push -u origin master
+```
+
+#### Solución correcta
+
+```bash
+git branch -m master main
+git push -u origin main
+git push origin --delete master
+```
+
+Y para evitar que vuelva a pasar en el futuro:
+
+```bash
+git config --global init.defaultBranch main
+```
+
+#### Aprendizaje
+
+GitHub usa `main` por defecto en muchos casos, por lo que hay que alinear el nombre de la rama local con la remota para evitar errores de push.
+
+---
+
+## 10. Siguientes pasos sugeridos
 
 A medida que avance el ejercicio, se puede continuar actualizando este documento con nuevos aspectos como:
 
@@ -192,7 +348,30 @@ A medida que avance el ejercicio, se puede continuar actualizando este documento
 
 ---
 
-## 9. Conclusión
+## 11. Conclusión
+
+Este ejercicio sirvió para comprender la relación entre programación, control de versiones y publicación en GitHub.
+
+No solo se desarrolló una aplicación funcional, sino que también se aprendió a:
+
+- organizar un proyecto
+- ignorar archivos innecesarios
+- manejar errores reales de Git
+- resolver conflictos
+- dejar un repositorio ordenado y listo para entregar
+- trabajar con ramas y sincronización remota
+
+---
+
+## 12. Registro de actualización
+
+- Fecha de actualización: 2026-08-30
+- Estado: en progreso / funcionando
+- Último punto verificado: aplicación ejecutándose correctamente, repositorio sincronizado con GitHub, prueba de carpeta no ignorada exitosa, y explicación de los tres ejercicios actualizados en este documento
+
+---
+
+Este documento puede ir actualizándose a medida que se avance con el ejercicio y se agreguen nuevas funcionalidades o mejoras al proyecto.
 
 Este ejercicio sirvió para comprender la relación entre programación, control de versiones y publicación en GitHub.
 
@@ -206,11 +385,11 @@ No solo se desarrolló una aplicación funcional, sino que también se aprendió
 
 ---
 
-## 10. Registro de actualización
+## 11. Registro de actualización
 
 - Fecha de creación: 2026-08-30
 - Estado: en progreso / funcionando
-- Último punto verificado: aplicación ejecutándose correctamente y repositorio sincronizado con GitHub
+- Último punto verificado: aplicación ejecutándose correctamente, repositorio sincronizado con GitHub y prueba de carpeta no ignorada exitosa
 
 ---
 
