@@ -4,3 +4,4 @@ __pycache__/
 entrega_seminario.zip
 datos_prueba/
 ~$*
+.gradio/

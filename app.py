@@ -1,12 +1,22 @@
 import gradio as gr
 
 
-def greet(name):
-    return f"Hello {name}!"
+def saludar(nombre):
+    nombre = nombre.strip()
+    if not nombre:
+        return "Escribí tu nombre para recibir un saludo."
+    return f"¡Hola {nombre}! Bienvenido a Gradio."
 
 
-demo = gr.Interface(fn=greet, inputs="text", outputs="text")
+with gr.Blocks() as demo:
+    gr.Markdown("# Mi primera app con Blocks")
+
+    nombre = gr.Textbox(label="Escribí tu nombre")
+    boton = gr.Button("Saludar")
+    salida = gr.Textbox(label="Resultado")
+
+    boton.click(fn=saludar, inputs=nombre, outputs=salida)
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(share=False)
