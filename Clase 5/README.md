@@ -3,7 +3,7 @@
 ## Entrega
 
 - **Deploy Gradio en Render:** https://seminario2026-9xol.onrender.com
-- **Deploy Streamlit:** `PENDIENTE - pegar aquí la URL pública de Streamlit`
+- **Deploy Streamlit:** https://seminario2026-clase5.streamlit.app
 
 La entrega se presenta mediante el repositorio de GitHub:
 
