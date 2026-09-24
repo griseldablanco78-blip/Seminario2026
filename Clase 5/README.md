@@ -2,7 +2,7 @@
 
 ## Entrega
 
-- **Deploy Gradio en Render:** `PENDIENTE - pegar aquí la URL pública de Render`
+- **Deploy Gradio en Render:** https://seminario2026-9xol.onrender.com
 - **Deploy Streamlit:** `PENDIENTE - pegar aquí la URL pública de Streamlit`
 
 La entrega se presenta mediante el repositorio de GitHub:
