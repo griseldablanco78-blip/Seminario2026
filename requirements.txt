@@ -1,8 +1,2 @@
-annotated-doc==0.0.5
-annotated-types==0.8.0
-anyio==4.14.2
-audioop-lts==0.2.2
-brotli==1.2.0
-gradio==6.26.0
-streamlit==1.50.0
-click==8.5.0
+gradio
+streamlit

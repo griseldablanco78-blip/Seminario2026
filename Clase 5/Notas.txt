@@ -1,0 +1,5 @@
+Ejecutar: ..\.venv\Scripts\python.exe app.py
+
+entrega:
+
+https://github.com/griseldablanco78-blip/Seminario2026/tree/main/Clase%205
