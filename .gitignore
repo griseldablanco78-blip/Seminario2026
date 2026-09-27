@@ -5,3 +5,4 @@ entrega_seminario.zip
 datos_prueba/
 ~$*
 .gradio/
+.streamlit/
