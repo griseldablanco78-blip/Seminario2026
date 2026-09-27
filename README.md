@@ -6,7 +6,7 @@ Este proyecto consiste en una aplicación web sencilla desarrollada con Gradio q
 ## Clases
 
 - [Clase 5 - Publicación y documentación](Clase%205/README.md): deploy de la app Gradio en Render, versión equivalente en Streamlit y documentación de la entrega.
-
+- [Clase 6 - Revisión de Repositorio](Clase%206/README.md): Análisis y evaluación del código y repositorio de un compañero.
 ## Objetivo
 
 Demostrar el uso básico de Gradio para crear interfaces de usuario simples y funcionales en Python, con una experiencia visual amigable y rápida de ejecutar.
