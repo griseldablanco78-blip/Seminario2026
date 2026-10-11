@@ -1,3 +1,0 @@
-gradio
-streamlit
-huggingface_hub
