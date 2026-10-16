@@ -2,7 +2,7 @@
 
 **URL pública de la web integrada:** pendiente de confirmar.
 
-La aplicación que se quiere conservar es la web principal de Expensa House, con interfaz FastAPI/HTML y los datos manuales sincronizados con la app. En esta carpeta hay además un **prototipo experimental independiente en Gradio** para probar modelos de Hugging Face; no reemplaza la web principal, no usa sus datos sincronizados y no debe presentarse como la versión web integrada.
+La aplicación que se quiere conservar es la web principal de Expensa House, con interfaz FastAPI/HTML y los datos manuales sincronizados con la app. En esta carpeta hay además un **prototipo experimental independiente en Gradio** para probar modelos de Hugging Face; no reemplaza la web principal, no usa sus datos sincronizados y no se presenta como la versión web integrada.
 
 > **Datos de demostración:** `ofertas.csv` contiene ejemplos inventados exclusivamente para probar el experimento. No son ofertas actuales ni datos reales del stock de Expensa House; no presentes esos precios como reales. El comparador de la web principal utiliza las ofertas manuales sincronizadas desde la app.
 
@@ -62,7 +62,7 @@ Abrí PowerShell en la carpeta raíz del repositorio:
 .\.venv\Scripts\python.exe TP_Integrador\app.py
 ```
 
-Si no existe `.venv`, crealo primero desde PowerShell:
+Creacion de `.venv`:
 
 ```powershell
 py -m venv .venv
@@ -89,18 +89,18 @@ La notebook compara los dos modelos con **las mismas consultas y los mismos prod
 El intento remoto requiere un token de Hugging Face y que el proveedor tenga disponible el modelo y capacidad de inferencia para tu cuenta. En la prueba de este proyecto, `InferenceClient` devolvió HTTP 402 (`Payment Required`): la cuenta no tenía créditos restantes y no se obtuvieron puntajes remotos. La notebook registra ese error y las consultas no ejecutadas. En VS Code, creá un archivo `.env` **local** dentro de `TP_Integrador/` (junto a `app.py`) con esta línea:
 
 ```text
-HF_TOKEN=hf_pegá_tu_token_acá
+HF_TOKEN=.....
 ```
 
-La notebook carga ese archivo con `python-dotenv`. El `.gitignore` de `Clase 7` ya excluye `.env`; verificá igualmente con `git status` que no esté preparado para subir. No pegues el token en la notebook, el README ni un mensaje. En Colab podés guardar el secreto como `HF_TOKEN` en la sección Secrets. La app de Gradio no depende de la API remota: corre inferencia local.
+La notebook carga ese archivo con `python-dotenv`. El `.gitignore` de `Clase 7` ya excluye `.env`.
 
-Corré todas las celdas y guardá las tablas realmente obtenidas. No uses los pocos ejemplos artificiales como garantía de calidad para todos los productos ni como precios reales. Para evaluar Expensa House, reemplazá o separá claramente esos ejemplos de las ofertas manuales observadas.
+
 
 ## 5. Publicar la demo experimental (no la web integrada)
 
 La siguiente configuración, si se usa, publica solo la demo de Gradio basada en `ofertas.csv`. **No publica ni sincroniza la web principal de Expensa House.** La URL que resulte no se debe presentar como la aplicación conectada a los datos reales. E5 ya se integró al comparador de la API principal; falta publicar esa web integrada y confirmar su URL pública. En la demo, el **código** vive en este repositorio, los **pesos** en Hugging Face y la inferencia corre dentro del proceso que aloja Gradio; no requiere créditos ni token para inferir. El servidor necesita memoria suficiente para PyTorch, E5 y Whisper.
 
-1. Subí la carpeta `TP_Integrador/` a una rama de GitHub.
+1. carpeta `TP_Integrador/` subida en la https://github.com/griseldablanco78-blip/Seminario2026/tree/Proyecto_Integrador/.
 2. En Render, creá un **Web Service** conectado a ese repositorio y elegí la rama.
 3. Configurá:
 
@@ -111,20 +111,17 @@ La siguiente configuración, si se usa, publica solo la demo de Gradio basada en
    | Start Command | `python app.py` |
    | Environment Variable | No se requiere `HF_TOKEN` para la app |
 
-4. Verificá que el plan del servidor tenga memoria y CPU suficientes: los modelos se descargan y corren dentro de la instancia. El primer arranque y la primera transcripción tardan más.
-5. Esperá el despliegue y probá la URL pública. Copiala en el encabezado de este README y en el informe. No configures ni publiques un token para la app local.
+
 
 ## 6. Informe y presentación
 
-Usá los resultados de la notebook para justificar las decisiones, no resultados supuestos:
-
 - **Necesidad y alcance:** quién buscaría ofertas y qué resuelve la similitud semántica frente a una búsqueda literal.
 - **Elección del modelo:** tarea, idiomas, parámetros, model cards, resultados comparativos y límites; incluir que la prueba local fue pequeña.
-- **Arquitectura experimental:** código de la demo en Git; pesos en el Hub; inferencia local con Transformers; interfaz Gradio si se despliega esa demo. Aclarar que no es la arquitectura de la web integrada.
-- **Arquitectura de Expensa House:** conservar la interfaz y la API existentes, usar las ofertas manuales sincronizadas como fuente y ejecutar E5 localmente en la API para ordenar ofertas compatibles por palabras clave. Falta publicar la web integrada y validar el comportamiento con un conjunto representativo de ofertas manuales.
+- **Arquitectura experimental:** código de la demo en Git; pesos en el Hub; inferencia local con Transformers; interfaz Gradio si se despliega esa demo. no es la arquitectura de la web integrada.
+- **Arquitectura de Expensa House:**  la interfaz y la API existentes, usar las ofertas manuales sincronizadas como fuente y ejecuta E5 localmente en la API para ordenar ofertas compatibles por palabras clave. Falta publicar la web integrada y validar el comportamiento con un conjunto representativo de ofertas manuales.
 - **Datos:** origen, fecha de relevamiento, unidad de comparación y limitación de que el CSV no se actualiza solo.
-- **Evaluación:** consultas, clasificaciones, scores y tiempos obtenidos al ejecutar la notebook; registrar explícitamente cualquier error de `InferenceClient`. No afirmar precisión top 2: la notebook actual calcula una clasificación top 1 con umbral.
+- **Evaluación:** consultas, clasificaciones, scores y tiempos obtenidos al ejecutar la notebook; registra explícitamente cualquier error de `InferenceClient`. No afirmar precisión top 2: la notebook actual calcula una clasificación top 1 con umbral.
 - **Publicación:** URL pública, configuración del servicio, recursos necesarios y por qué la inferencia es local.
-- **Mejoras:** conseguir datos actualizados con permiso, ampliar ejemplos y probar el sistema con usuarios.
+- **Mejoras:** Falta datos actualizados con permiso, ampliar ejemplos para probar el sistema con usuarios.
 
-En esta carpeta todavía no están el informe PDF ni la presentación PPTX, y no hay una URL pública confirmada de la web integrada. Para completar la entrega, ejecutá y guardá la notebook, publicá la web integrada, añadí su enlace público real y prepará `TP_Apellido_Nombre.pdf` y `TP_Apellido_Nombre.pptx` con tu nombre. No uses como enlace de la web integrada una publicación de la demo independiente. El PDF del aula requiere iniciar sesión, así que compará los entregables con la consigna completa del curso antes de subirlos.
+En esta carpeta todavía no están el informe PDF ni la presentación PPTX, y no hay una URL pública confirmada de la web integrada.
