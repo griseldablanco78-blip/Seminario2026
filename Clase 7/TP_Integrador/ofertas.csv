@@ -1,0 +1,13 @@
+supermercado,producto,familia,precio,cantidad,unidad,fecha_relevamiento,fuente
+Super A,Leche entera La Serenisima sachet 1 litro,leche,1450,1000,ml,2026-10-01,Ejemplo inventado
+Super B,Leche LS entera 1L,leche,1390,1000,ml,2026-10-01,Ejemplo inventado
+Super C,Leche entera larga vida 1 lt,leche,1520,1000,ml,2026-10-01,Ejemplo inventado
+Super A,Yerba mate Taragui 1kg,yerba,5200,1000,g,2026-10-01,Ejemplo inventado
+Super B,Yerba Taragui con palo 1 kg,yerba,4990,1000,g,2026-10-01,Ejemplo inventado
+Super C,Yerba mate suave 500g,yerba,2800,500,g,2026-10-01,Ejemplo inventado
+Super A,Detergente Ala 750ml,detergente,2100,750,ml,2026-10-01,Ejemplo inventado
+Super B,Lavavajillas Ala limon 750 ml,detergente,2250,750,ml,2026-10-01,Ejemplo inventado
+Super C,Detergente para vajilla 500ml,detergente,1500,500,ml,2026-10-01,Ejemplo inventado
+Super A,Fideos tirabuzon Matarazzo 500g,fideos,1300,500,g,2026-10-01,Ejemplo inventado
+Super B,Tirabuzones Matarazzo paquete 500 g,fideos,1250,500,g,2026-10-01,Ejemplo inventado
+Super C,Fideos mostachol 500g,fideos,1180,500,g,2026-10-01,Ejemplo inventado

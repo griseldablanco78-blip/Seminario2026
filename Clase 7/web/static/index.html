@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expensa House | Inventario y ofertas guardadas</title>
+  <meta name="description" content="Inventario y gastos del hogar sincronizados con la app móvil, con búsqueda por voz entre ofertas cargadas manualmente.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%3E<text y=%2226%22 font-size=%2224%22>🏠</text></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <span class="brand-icon">🏠</span>
+        <div class="brand-text">
+          <h1>EXPENSA HOUSE</h1>
+          <span class="brand-badge">INVENTARIO & OFERTAS</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-btn active" data-tab="comparator">
+          <span class="icon">✨</span>
+          <span>Ofertas guardadas</span>
+        </button>
+        <button class="nav-btn" data-tab="dashboard">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-tab="stock">
+          <span class="icon">📦</span>
+          <span>Alacena & Stock</span>
+        </button>
+        <button class="nav-btn" data-tab="shopping">
+          <span class="icon">📝</span>
+          <span>Lista del Súper</span>
+          <span id="shopping-badge-count" class="badge-count">0</span>
+        </button>
+        <button class="nav-btn" data-tab="budget">
+          <span class="icon">💰</span>
+          <span>Presupuesto</span>
+        </button>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="sync-indicator" id="sync-indicator" title="Conectado con App Android">
+          <span class="sync-dot"></span>
+          <span class="sync-text">Sincronizado</span>
+        </div>
+        <button id="btn-sync-now" class="btn-icon" title="Forzar sincronización">🔄</button>
+        <button id="btn-theme-toggle" class="btn-icon" title="Cambiar tema">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Container -->
+  <main class="app-main">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: COMPARADOR DE OFERTAS CON IA & VOZ -->
+    <!-- ========================================== -->
+    <section id="tab-comparator" class="tab-pane active">
+      <!-- Hero Comparador -->
+      <div class="comparator-hero">
+        <div class="hero-header">
+          <div class="hero-pill">🧾 OFERTAS CARGADAS EN TU APP</div>
+          <h2>Compará tus ofertas guardadas</h2>
+          <p>Buscá por voz o texto entre las ofertas que cargaste y sincronizaste desde la app. No consultamos catálogos en vivo ni inventamos precios o promociones; la cantidad, la unidad y la fecha deben verificarse antes de comparar.</p>
+        </div>
+
+        <!-- Barra de Búsqueda Inteligente con Voz -->
+        <div class="search-box-card">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="ai-search-input" placeholder="¿Qué producto buscas? Ej.: Leche La Serenísima, Café molido, Detergente Ala..." autocomplete="off">
+            
+            <!-- Botón de Voz a Texto -->
+            <button id="btn-voice-search" class="voice-btn" title="Buscar usando tu voz (Speech to Text)">
+              <span class="mic-icon">🎙️</span>
+              <span class="voice-wave"></span>
+            </button>
+
+            <!-- Botón de Comparar -->
+            <button id="btn-ai-search" class="btn-primary search-action-btn">
+              <span>Buscar ofertas guardadas</span>
+              <span class="sparkle">✨</span>
+            </button>
+          </div>
+
+          <!-- Indicador de estado de voz -->
+          <div id="voice-status-bar" class="voice-status-bar hidden">
+            <span class="pulse-recording"></span>
+            <span id="voice-status-text">Escuchando... Di el nombre del producto</span>
+            <button id="btn-stop-voice" class="btn-link">Cancelar</button>
+          </div>
+
+          <!-- Chips de acceso rápido / productos críticos -->
+          <div class="quick-chips-wrapper">
+            <span class="chips-label">💡 Sugerencias de tu alacena:</span>
+            <div id="critical-quick-chips" class="chips-container">
+              <!-- Rellenado dinámicamente con productos de la casa -->
+              <button class="chip" data-search="leche entera">🥛 Leche</button>
+              <button class="chip" data-search="cafe molido">☕ Café</button>
+              <button class="chip" data-search="arroz largo fino">🌾 Arroz</button>
+              <button class="chip" data-search="detergente ala">🫧 Detergente</button>
+              <button class="chip" data-search="jabon ariel">🧺 Jabón Ropa</button>
+              <button class="chip" data-search="yerba mate">🧉 Yerba</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spinner de carga IA -->
+      <div id="comparator-loading" class="loading-state hidden">
+        <div class="ai-orb-spinner"></div>
+        <p class="loading-title">Buscando en tus ofertas guardadas...</p>
+        <p class="loading-subtitle">Se comparan los precios que cargaste manualmente. No se consulta información externa.</p>
+      </div>
+
+      <!-- Contenedor de Resultados Comparativos -->
+      <div id="comparator-results" class="comparator-results">
+        <!-- Veredicto IA Card -->
+        <div class="ai-verdict-card" id="ai-verdict-box">
+          <div class="verdict-header">
+            <div class="verdict-icon">💡</div>
+            <div>
+              <h3>Resumen de la comparación</h3>
+              <p id="verdict-subtitle">Cruce con tu alacena y las ofertas guardadas</p>
+            </div>
+          </div>
+          <div class="verdict-body" id="verdict-text">
+            <!-- Texto del veredicto -->
+          </div>
+          <div class="verdict-pills" id="verdict-pills">
+            <div class="pill-stat" id="pill-best-single">
+              <span class="label">🥇 Menor precio cargado</span>
+              <span class="value" id="val-best-single">-</span>
+            </div>
+            <div class="pill-stat highlight" id="pill-best-bulk">
+              <span class="label">🧾 Ofertas encontradas</span>
+              <span class="value" id="val-best-bulk">-</span>
+            </div>
+            <div class="pill-stat saving" id="pill-max-saving">
+              <span class="label">🏷️ Descuento informado</span>
+              <span class="value" id="val-max-saving">-</span>
+            </div>
+          </div>
+          <div id="verdict-stock-alert" class="verdict-stock-alert">
+            <!-- Alerta del estado de stock en casa -->
+          </div>
+        </div>
+
+        <!-- Título de sección de ofertas -->
+        <div class="section-title-row">
+          <h3 id="comparison-target-title">Ofertas guardadas</h3>
+          <span class="badge-store-count" id="comparison-store-count">0 ofertas guardadas</span>
+        </div>
+
+        <!-- Grid de Tarjetas de Supermercados -->
+        <div class="supermarket-grid" id="supermarket-cards-container">
+          <!-- Tarjetas generadas dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: DASHBOARD GENERAL (EDA Y RESUMEN)   -->
+    <!-- ========================================== -->
+    <section id="tab-dashboard" class="tab-pane">
+      <div class="page-header">
+        <div>
+          <h2>Tu Casa en Perspectiva</h2>
+          <p>Métricas consolidadas de inventario, consumo y presupuesto familiar.</p>
+        </div>
+      </div>
+
+      <!-- KPI Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon bg-emerald">📦</div>
+          <div class="metric-info">
+            <span class="metric-label">Unidades en Casa</span>
+            <span class="metric-val" id="kpi-total-units">0</span>
+            <span class="metric-sub" id="kpi-distinct-prods">0 productos distintos</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon bg-coral">⚠️</div>
+          <div class="metric-info">
+            <span class="metric-label">Stock Crítico</span>
+            <span class="metric-val text-coral" id="kpi-critical-count">0</span>
+            <span class="metric-sub">Requieren reposición</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon bg-blue">💰</div>
+          <div class="metric-info">
+            <span class="metric-label">Presupuesto Restante</span>
+            <span class="metric-val text-leaf" id="kpi-remaining-budget">$0</span>
+            <span class="metric-sub" id="kpi-spent-budget">Gastado: $0</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon bg-amber">✨</div>
+          <div class="metric-info">
+            <span class="metric-label">Ahorro por ofertas</span>
+            <span class="metric-val text-amber" id="kpi-ai-saving">Sin datos</span>
+            <span class="metric-sub">Todavía no se calcula en la web</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Gráficos y Distribución -->
+      <div class="dashboard-panels-grid">
+        <div class="card-panel">
+          <h3>📦 Distribución de Stock por Categoría</h3>
+          <div class="category-bars-list" id="category-distribution-bars">
+            <!-- Barras de categoría -->
+          </div>
+        </div>
+
+        <div class="card-panel">
+          <h3>⚠️ Productos que Requieren Atención Urgente</h3>
+          <div class="critical-items-list" id="dashboard-critical-list">
+            <!-- Lista de productos críticos -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: ALACENA & STOCK (INVENTARIO)        -->
+    <!-- ========================================== -->
+    <section id="tab-stock" class="tab-pane">
+      <div class="page-header">
+        <div>
+          <h2>Inventario del Hogar</h2>
+          <p>Gestioná unidades cerradas en alacena y productos abiertos actualmente en uso.</p>
+        </div>
+        <button id="btn-open-add-stock-modal" class="btn-primary">
+          <span>+ Agregar Producto</span>
+        </button>
+      </div>
+
+      <!-- Filtros de Inventario -->
+      <div class="filter-bar">
+        <div class="search-filter-input">
+          <span>🔍</span>
+          <input type="text" id="stock-filter-query" placeholder="Filtrar por nombre o marca...">
+        </div>
+        <div class="category-filter-chips" id="stock-category-filters">
+          <button class="filter-chip active" data-cat="all">Todos</button>
+          <button class="filter-chip" data-cat="Comestibles">Comestibles</button>
+          <button class="filter-chip" data-cat="Limpieza">Limpieza</button>
+          <button class="filter-chip" data-cat="Carnicería">Carnicería</button>
+          <button class="filter-chip" data-cat="Verdulería">Verdulería</button>
+          <button class="filter-chip" data-cat="Hogar">Hogar</button>
+        </div>
+        <label class="toggle-critical-label">
+          <input type="checkbox" id="stock-filter-critical-only">
+          <span>Solo stock crítico</span>
+        </label>
+      </div>
+
+      <!-- Tabla de Stock -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th class="text-center">Cerradas (Stock)</th>
+              <th class="text-center">En Uso (Abiertas)</th>
+              <th class="text-center">Total</th>
+              <th>Estado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="stock-table-body">
+            <!-- Filas de inventario -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: LISTA DEL SÚPER (SHOPPING LIST)     -->
+    <!-- ========================================== -->
+    <section id="tab-shopping" class="tab-pane">
+      <div class="page-header">
+        <div>
+          <h2>Lista de Compras</h2>
+          <p>Productos que faltan en casa o agregados desde las mejores ofertas encontradas por la IA.</p>
+        </div>
+        <button id="btn-open-add-shopping-modal" class="btn-primary">
+          <span>+ Agregar a la Lista</span>
+        </button>
+      </div>
+
+      <div class="shopping-layout" id="shopping-list-container">
+        <!-- Renderizado de compras agrupado por categoría -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 5: PRESUPUESTO & GASTOS (FINANZAS)     -->
+    <!-- ========================================== -->
+    <section id="tab-budget" class="tab-pane">
+      <div class="page-header">
+        <div>
+          <h2>Presupuesto & Registro de Gastos</h2>
+          <p>Controlá el presupuesto mensual y cargá los tickets de compra del supermercado.</p>
+        </div>
+        <div class="header-actions">
+          <button id="btn-open-budget-modal" class="btn-secondary">⚙️ Definir Presupuesto</button>
+          <button id="btn-open-expense-modal" class="btn-primary">🧾 Cargar Ticket</button>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Progreso del Presupuesto -->
+      <div class="budget-card">
+        <div class="budget-header-row">
+          <div>
+            <span class="budget-sub">Presupuesto Mensual Asignado</span>
+            <h3 class="budget-title" id="budget-total-display">$0.00</h3>
+          </div>
+          <div class="text-right">
+            <span class="budget-sub">Saldo Restante</span>
+            <h3 class="budget-remaining-display" id="budget-remaining-display">$0.00</h3>
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="budget-progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="budget-footer-row">
+          <span id="budget-spent-text">Total gastado: $0.00</span>
+          <span id="budget-percent-text">0% utilizado</span>
+        </div>
+      </div>
+
+      <!-- Historial de Gastos / Tickets -->
+      <div class="card-panel mt-4">
+        <h3>🧾 Historial de Tickets y Compras</h3>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Categoría</th>
+                <th>Detalle / Nota</th>
+                <th class="text-right">Monto</th>
+              </tr>
+            </thead>
+            <tbody id="expenses-table-body">
+              <!-- Filas de gastos -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALES DE DIÁLOGO                         -->
+  <!-- ========================================== -->
+
+  <!-- Modal: Agregar / Editar Producto en Stock -->
+  <div id="modal-stock" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-stock-title">Agregar Producto a la Alacena</h3>
+        <button class="btn-close-modal" data-close="modal-stock">✕</button>
+      </div>
+      <form id="form-stock">
+        <input type="hidden" id="stock-form-id">
+        <div class="form-group">
+          <label for="stock-form-name">Nombre del Producto</label>
+          <input type="text" id="stock-form-name" required placeholder="Ej.: Leche entera, Fideos tallarines...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stock-form-brand">Marca</label>
+            <input type="text" id="stock-form-brand" placeholder="Ej.: La Serenísima, Molinos...">
+          </div>
+          <div class="form-group">
+            <label for="stock-form-category">Categoría</label>
+            <select id="stock-form-category" required>
+              <option value="Comestibles">Comestibles</option>
+              <option value="Limpieza">Limpieza</option>
+              <option value="Carnicería">Carnicería</option>
+              <option value="Verdulería">Verdulería</option>
+              <option value="Hogar">Hogar</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stock-form-qty">Cantidad Cerradas</label>
+            <input type="number" id="stock-form-qty" min="0" value="1" required>
+          </div>
+          <div class="form-group">
+            <label for="stock-form-inuse">Abiertas en Uso</label>
+            <input type="number" id="stock-form-inuse" min="0" value="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stock-form-unit">Unidad</label>
+            <input type="text" id="stock-form-unit" placeholder="Ej.: litro, kg, paquete, unidad">
+          </div>
+          <div class="form-group">
+            <label for="stock-form-price">Precio Estimado ($)</label>
+            <input type="number" id="stock-form-price" min="0" step="0.01" placeholder="Ej.: 1500">
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-close="modal-stock">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Agregar Ítem a Lista de Compras -->
+  <div id="modal-shopping" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Agregar a la Lista del Súper</h3>
+        <button class="btn-close-modal" data-close="modal-shopping">✕</button>
+      </div>
+      <form id="form-shopping">
+        <div class="form-group">
+          <label for="shop-form-name">Producto a Comprar</label>
+          <input type="text" id="shop-form-name" required placeholder="Ej.: Café molido, Detergente...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="shop-form-brand">Marca</label>
+            <input type="text" id="shop-form-brand" placeholder="Ej.: La Virginia">
+          </div>
+          <div class="form-group">
+            <label for="shop-form-category">Categoría</label>
+            <select id="shop-form-category">
+              <option value="Comestibles">Comestibles</option>
+              <option value="Limpieza">Limpieza</option>
+              <option value="Carnicería">Carnicería</option>
+              <option value="Verdulería">Verdulería</option>
+              <option value="Hogar">Hogar</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="shop-form-qty">Cantidad a Comprar</label>
+            <input type="number" id="shop-form-qty" min="1" value="1" required>
+          </div>
+          <div class="form-group">
+            <label for="shop-form-store">Súper Sugerido</label>
+            <select id="shop-form-store">
+              <option value="">Cualquiera</option>
+              <option value="Coto">Coto</option>
+              <option value="Carrefour">Carrefour</option>
+              <option value="Día">Día</option>
+              <option value="Jumbo">Jumbo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="shop-form-detail">Nota / Detalle</label>
+          <input type="text" id="shop-form-detail" placeholder="Ej.: Aprovechar 2do al 70%">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-close="modal-shopping">Cancelar</button>
+          <button type="submit" class="btn-primary">Añadir a Lista</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Definir Presupuesto -->
+  <div id="modal-budget" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Definir Presupuesto Mensual</h3>
+        <button class="btn-close-modal" data-close="modal-budget">✕</button>
+      </div>
+      <form id="form-budget">
+        <div class="form-group">
+          <label for="budget-form-amount">Monto de Presupuesto ($)</label>
+          <input type="number" id="budget-form-amount" min="0" step="100" required placeholder="Ej.: 180000">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-close="modal-budget">Cancelar</button>
+          <button type="submit" class="btn-primary">Guardar Presupuesto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Cargar Ticket de Gasto -->
+  <div id="modal-expense" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Registrar Ticket de Compra</h3>
+        <button class="btn-close-modal" data-close="modal-expense">✕</button>
+      </div>
+      <form id="form-expense">
+        <div class="form-group">
+          <label for="expense-form-amount">Monto del Ticket ($)</label>
+          <input type="number" id="expense-form-amount" min="1" step="0.01" required placeholder="Ej.: 15400.50">
+        </div>
+        <div class="form-group">
+          <label for="expense-form-category">Categoría</label>
+          <select id="expense-form-category">
+            <option value="Comestibles">Comestibles</option>
+            <option value="Limpieza">Limpieza</option>
+            <option value="Carnicería">Carnicería</option>
+            <option value="Verdulería">Verdulería</option>
+            <option value="Hogar">Hogar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expense-form-note">Detalle / Supermercado</label>
+          <input type="text" id="expense-form-note" placeholder="Ej.: Compra Carrefour quincenal">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" data-close="modal-expense">Cancelar</button>
+          <button type="submit" class="btn-primary">Registrar Gasto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CHAT FLOTANTE: BOTI HOUSE IA               -->
+  <!-- ========================================== -->
+  <div class="boti-widget-container">
+    <button id="boti-toggle-btn" class="boti-bubble-btn" title="Preguntale a Boti House">
+      <span class="boti-avatar">🤖</span>
+      <span class="boti-ping"></span>
+    </button>
+
+    <div id="boti-chat-panel" class="boti-chat-window hidden">
+      <div class="boti-chat-header">
+        <div class="boti-header-info">
+          <span class="boti-header-avatar">🤖</span>
+          <div>
+            <h4>Boti House</h4>
+            <span class="boti-status-online">Consultas sobre tus datos</span>
+          </div>
+        </div>
+        <button id="btn-close-boti" class="boti-btn-close">✕</button>
+      </div>
+
+      <div class="boti-messages-container" id="boti-messages">
+        <div class="boti-msg bot">
+          ¡Hola, soy Boti House! ¿Qué necesitás? Escribí 1, 2 o 3, o elegí una opción:
+        </div>
+        <div class="boti-quick-options" aria-label="Consultas sugeridas">
+          <button type="button" data-chat-prompt="1">1 · 📦 Reposición</button>
+          <button type="button" data-chat-prompt="2">2 · 🏷️ Ofertas guardadas</button>
+          <button type="button" data-chat-prompt="3">3 · 💰 Presupuesto</button>
+        </div>
+      </div>
+
+      <div class="boti-input-wrapper">
+        <input type="text" id="boti-user-input" placeholder="Escribe tu consulta...">
+        <button id="btn-send-boti" class="btn-send-msg">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- JavaScript -->
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
