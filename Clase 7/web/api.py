@@ -5,7 +5,10 @@ Provee motor de IA para comparar ofertas de supermercados, búsqueda por voz y a
 """
 import os
 import sys
-import io
+import logging
+import subprocess
+import tempfile
+from pathlib import Path
 from typing import List, Dict, Any, Optional
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,6 +33,9 @@ from web.ai_comparator import (
     compare_supermarket_offers,
     answer_ai_chat_query,
 )
+
+logger = logging.getLogger(__name__)
+USE_WHISPER = os.getenv("USE_WHISPER", "0") == "1"
 
 app = FastAPI(
     title="Expensa House API & Web",
@@ -241,22 +247,71 @@ def api_ai_chat(req: ChatRequest):
     answer = answer_ai_chat_query(req.message)
     return {"answer": answer}
 
+def _transcribe_with_google(audio_path: str) -> str:
+    import speech_recognition as sr
+
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(audio_path) as source:
+        audio_data = recognizer.record(source)
+    return recognizer.recognize_google(audio_data, language="es-AR")
+
+
+def _convert_audio_to_wav(source_path: str, wav_path: str) -> None:
+    subprocess.run(
+        ["ffmpeg", "-y", "-i", source_path, "-ac", "1", "-ar", "16000", wav_path],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+
 @app.post("/api/voice/transcribe")
 async def api_voice_transcribe(audio: UploadFile = File(...)):
-    """
-    Endpoint de transcripción de voz a texto del lado del servidor.
-    Complementa el Web Speech API del navegador cuando el usuario sube un clip de audio.
-    """
+    """Transcribe audio con Whisper opcional y Google como alternativa."""
+    audio_bytes = await audio.read()
+    if not audio_bytes:
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": "El archivo de audio está vacío."},
+        )
+
+    suffix = Path(audio.filename or "").suffix.lower()
+    if not suffix or not suffix[1:].isalnum():
+        suffix = ".webm"
+
     try:
-        import speech_recognition as sr
-        r = sr.Recognizer()
-        audio_bytes = await audio.read()
-        audio_file = io.BytesIO(audio_bytes)
-        with sr.AudioFile(audio_file) as source:
-            audio_data = r.record(source)
-            text = r.recognize_google(audio_data, language="es-AR")
-            return {"status": "success", "text": text}
+        with tempfile.TemporaryDirectory() as temp_dir:
+            audio_path = os.path.join(temp_dir, f"recording{suffix}")
+            wav_path = os.path.join(temp_dir, "recording.wav")
+            with open(audio_path, "wb") as audio_file:
+                audio_file.write(audio_bytes)
+
+            if USE_WHISPER:
+                try:
+                    from web.voice_model import transcribe_audio
+
+                    return {
+                        "status": "success",
+                        "text": transcribe_audio(audio_path),
+                        "engine": "whisper",
+                    }
+                except Exception:
+                    logger.warning(
+                        "Whisper falló; se intentará la transcripción alternativa de Google.",
+                        exc_info=True,
+                    )
+
+            google_audio_path = audio_path
+            if suffix not in {".wav", ".wave"}:
+                _convert_audio_to_wav(audio_path, wav_path)
+                google_audio_path = wav_path
+            return {
+                "status": "success",
+                "text": _transcribe_with_google(google_audio_path),
+                "engine": "google",
+            }
     except Exception as e:
+        logger.exception("No se pudo transcribir el audio.")
         return JSONResponse(
             status_code=400,
             content={"status": "error", "message": f"No se pudo transcribir el audio: {str(e)}"}

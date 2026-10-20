@@ -6,8 +6,8 @@ En esta clase se desarrollaron y desplegaron dos aplicaciones web interactivas e
 
 ## 🌐 Enlaces a las Aplicaciones Publicadas
 
-- **Gradio en Render:** [https://tu-app-gradio.onrender.com](https://tu-app-gradio.onrender.com) *(reemplazar por la URL obtenida en Render)*
-- **Streamlit en Render:** [https://tu-app-streamlit.onrender.com](https://tu-app-streamlit.onrender.com) *(reemplazar por la URL obtenida en Render)*
+- **Gradio en Render:** [https://tu-app-gradio.onrender.com](https://github.com/griseldablanco78-blip/Seminario2026)
+- **Streamlit en Render:** [https://tu-app-streamlit.onrender.com](https://seminario2026-clase5.streamlit.app/)
 
 ---
 

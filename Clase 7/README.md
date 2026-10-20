@@ -34,19 +34,60 @@ Para el trabajo practico se recomienda comenzar exportando los datos de Room y r
 
 La API FastAPI es el puente entre Room y la pagina web. En el primer inicio, si Room esta vacia, Android descarga el estado inicial del servidor. Luego, cada cambio guardado en Android se envia a la API; el boton de sincronizacion de la app tambien permite reenviar el estado manualmente. La pagina web muestra los cambios al recargar o al pulsar su boton 🔄; no usa actualizacion push en tiempo real.
 
-1. En Windows, iniciar la API desde la carpeta del proyecto:
+1. En PowerShell, desde la carpeta del repositorio `Seminario2026`, entrar a `Clase 7`:
 
    ```powershell
-   .\.venv\Scripts\python.exe -m uvicorn web.api:app --host 0.0.0.0 --port 8000
+   Set-Location -LiteralPath '.\Clase 7'
    ```
 
-2. Abrir `http://127.0.0.1:8000` en la PC para usar la web.
-3. Para probar con un telefono fisico en la misma red Wi-Fi, agregar a `local.properties` la URL de la PC (usar su direccion IPv4 local y conservar la barra final):
+2. Crear el entorno virtual e instalar las dependencias (la creacion se hace una sola vez):
+
+   ```powershell
+   py -m venv .venv
+   .\.venv\Scripts\python.exe -m pip install -r .\requirements.txt
+   ```
+
+3. Levantar el servidor desde la carpeta `Clase 7`:
+
+   ```powershell
+   .\.venv\Scripts\python.exe -m uvicorn web.api:app --reload --host 0.0.0.0 --port 8001
+   ```
+
+   Dejar esa terminal abierta mientras se usa la aplicacion. Abrir `http://127.0.0.1:8001/` en el navegador de la PC.
+
+### Probar Whisper y la deteccion de intenciones E5
+
+El endpoint recibe audio WebM: Whisper lo procesa con FFmpeg y la alternativa de Google lo convierte a WAV usando FFmpeg. Instalalo una sola vez desde PowerShell y luego cerrá y reabrí la terminal:
+
+```powershell
+winget install Gyan.FFmpeg
+ffmpeg -version
+```
+
+Para habilitar Whisper y la detección experimental de intenciones del chatbot, definí estas variables **antes de iniciar Uvicorn** en la misma terminal:
+
+```powershell
+$env:USE_WHISPER = "1"
+$env:USE_E5_INTENT = "1"
+.\.venv\Scripts\python.exe -m uvicorn web.api:app --reload --host 0.0.0.0 --port 8001
+```
+
+Después de iniciar el servidor, en `http://127.0.0.1:8001/docs` probá `POST /api/voice/transcribe` subiendo un audio breve en español. La respuesta indica `"engine": "whisper"` si Whisper lo transcribió o `"engine": "google"` si se usó la alternativa. La primera inferencia descarga los pesos de `openai/whisper-tiny`. Para volver al comportamiento por defecto, cambiá las variables a `"0"` y reiniciá Uvicorn.
+
+El script de calibración de intenciones se ejecuta desde `Clase 7` con:
+
+```powershell
+.\.venv\Scripts\python.exe .\web\calibrar_intencion.py
+```
+
+El umbral E5 está configurado conservadoramente en `0.88`: en la muestra de calibración local no activó ninguna de 8 frases negativas, pero dejó sin detectar 3 de 11 positivas. Es una prueba pequeña, no una garantía. Cuando el navegador lo permite, el botón del micrófono graba con `MediaRecorder` y envía el audio a este endpoint; si no está disponible, conserva Web Speech API como alternativa. Con `USE_WHISPER="1"` el servidor intenta Whisper primero.
+
+4. Para sincronizar desde el emulador de Android Studio, agregar esta propiedad al archivo local `local.properties` de `Clase 7`:
 
    ```properties
-   expensa.apiBaseUrl=http://DIRECCION_IPV4_DE_LA_PC:8000/
+   expensa.apiBaseUrl=http://10.0.2.2:8001/
    ```
 
-   El valor predeterminado `http://10.0.2.2:8000/` es para el emulador de Android Studio. Volver a sincronizar Gradle y ejecutar la variante `debug` despues de cambiar la URL.
+   Para probar con un telefono fisico en la misma red Wi-Fi, reemplazar `10.0.2.2` por la direccion IPv4 local de la PC. Conservar la barra final. Volver a sincronizar Gradle y ejecutar la variante `debug`.
 
-La variante `debug` permite HTTP para esta prueba local. No publicar la API de esta forma en Internet: antes de desplegarla hacen falta HTTPS, autenticacion y almacenamiento adecuado.
+La variante `debug` permite HTTP para esta prueba local. `0.0.0.0` permite que otros dispositivos de la red alcancen el servidor; para usarlo en Internet hacen falta HTTPS, autenticacion y almacenamiento adecuado.

@@ -136,8 +136,13 @@ function initSpeechRecognition() {
   const statusText = document.getElementById('voice-status-text');
   const searchInput = document.getElementById('ai-search-input');
 
+  if (navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== 'undefined') {
+    initServerSpeechRecognition(voiceBtn, statusBar, statusText, searchInput);
+    return;
+  }
+
   if (!SpeechRecognition) {
-    console.warn('Web Speech API no está soportada de forma nativa en este navegador.');
+    console.warn('No hay una API de reconocimiento o grabación de voz disponible en este navegador.');
     voiceBtn.title = 'Reconocimiento de voz no soportado en este navegador';
     voiceBtn.addEventListener('click', () => {
       showToast('El dictado no está disponible en este navegador. Probá con Chrome o Edge, o escribí el producto.');
@@ -145,6 +150,156 @@ function initSpeechRecognition() {
     return;
   }
 
+  initBrowserSpeechRecognition(
+    SpeechRecognition,
+    voiceBtn,
+    statusBar,
+    statusText,
+    searchInput,
+  );
+}
+
+function initServerSpeechRecognition(voiceBtn, statusBar, statusText, searchInput) {
+  let recorder = null;
+  let mediaStream = null;
+  let audioChunks = [];
+  let isStarting = false;
+  let recordingFailed = false;
+
+  async function startRecording() {
+    if (isStarting || state.isRecordingVoice) return;
+    isStarting = true;
+    voiceBtn.disabled = true;
+    statusBar.classList.remove('hidden');
+    statusText.textContent = 'Solicitando permiso para usar el micrófono...';
+
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = [
+        'audio/webm;codecs=opus',
+        'audio/ogg;codecs=opus',
+        'audio/mp4',
+      ].find(type => MediaRecorder.isTypeSupported(type));
+      recorder = new MediaRecorder(
+        mediaStream,
+        mimeType ? { mimeType } : undefined,
+      );
+      audioChunks = [];
+      recordingFailed = false;
+      recorder.addEventListener('dataavailable', event => {
+        if (event.data.size > 0) audioChunks.push(event.data);
+      });
+      recorder.addEventListener('error', event => {
+        recordingFailed = true;
+        console.error('Error al grabar audio:', event.error);
+        releaseMicrophone();
+        statusBar.classList.add('hidden');
+        showToast('No se pudo grabar el audio. Revisá el micrófono y probá otra vez.');
+      });
+      recorder.addEventListener('stop', transcribeRecording, { once: true });
+      recorder.start();
+      state.isRecordingVoice = true;
+      voiceBtn.classList.add('recording');
+      statusText.textContent = '🎙️ Escuchando... Tocá “Terminar” para buscar por voz.';
+    } catch (error) {
+      releaseMicrophone();
+      statusBar.classList.add('hidden');
+      console.error('No se pudo iniciar la grabación:', error);
+      if (error.name === 'NotAllowedError' || error.name === 'SecurityError') {
+        showToast('⚠️ Permití el acceso al micrófono en el navegador para dictar.');
+      } else {
+        showToast('No se pudo iniciar el micrófono. Probá de nuevo o escribí el producto.');
+      }
+    } finally {
+      isStarting = false;
+      voiceBtn.disabled = false;
+    }
+  }
+
+  function stopRecording() {
+    if (!recorder || recorder.state === 'inactive') return;
+    state.isRecordingVoice = false;
+    voiceBtn.classList.remove('recording');
+    statusText.textContent = '⏳ Transcribiendo el audio...';
+    recorder.stop();
+  }
+
+  async function transcribeRecording() {
+    if (recordingFailed) {
+      audioChunks = [];
+      statusBar.classList.add('hidden');
+      releaseMicrophone();
+      return;
+    }
+    const audioBlob = new Blob(audioChunks, {
+      type: recorder?.mimeType || 'audio/webm',
+    });
+    audioChunks = [];
+    releaseMicrophone();
+
+    if (!audioBlob.size) {
+      statusBar.classList.add('hidden');
+      showToast('No se grabó audio. Hablá después de iniciar el micrófono e intentá de nuevo.');
+      return;
+    }
+
+    const extension = audioBlob.type.includes('ogg')
+      ? 'ogg'
+      : audioBlob.type.includes('mp4')
+        ? 'm4a'
+        : 'webm';
+    const formData = new FormData();
+    formData.append('audio', audioBlob, `busqueda.${extension}`);
+
+    try {
+      const response = await fetch('/api/voice/transcribe', {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || `El servidor respondió HTTP ${response.status}.`);
+      }
+
+      const query = (result.text || '').trim();
+      if (!query) throw new Error('No se reconocieron palabras en el audio.');
+
+      searchInput.value = query;
+      const engine = result.engine === 'whisper' ? 'Whisper' : 'Google';
+      showToast(`🔍 Buscando ofertas por voz: "${query}" (${engine}).`);
+      performAIComparison(query);
+    } catch (error) {
+      console.error('No se pudo transcribir el audio:', error);
+      showToast(`⚠️ No se pudo transcribir el audio: ${error.message}`);
+    } finally {
+      statusBar.classList.add('hidden');
+    }
+  }
+
+  function releaseMicrophone() {
+    state.isRecordingVoice = false;
+    voiceBtn.classList.remove('recording');
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(track => track.stop());
+      mediaStream = null;
+    }
+    recorder = null;
+  }
+
+  voiceBtn.addEventListener('click', () => {
+    if (state.isRecordingVoice) stopRecording();
+    else startRecording();
+  });
+  document.getElementById('btn-stop-voice').addEventListener('click', stopRecording);
+}
+
+function initBrowserSpeechRecognition(
+  SpeechRecognition,
+  voiceBtn,
+  statusBar,
+  statusText,
+  searchInput,
+) {
   const recognition = new SpeechRecognition();
   let recognizedText = '';
   let recognitionFailed = false;

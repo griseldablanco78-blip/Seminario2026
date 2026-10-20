@@ -15,6 +15,27 @@ from data.db import get_offers, get_stock
 
 E5_MODEL_ID = "intfloat/multilingual-e5-small"
 KEYWORD_MATCH_THRESHOLD = 0.5
+USE_E5_INTENT = os.getenv("USE_E5_INTENT", "0") == "1"
+INTENT_MIN_SCORE = 0.88
+INTENTS = {
+    "reposicion": [
+        "qué me falta comprar",
+        "qué cosas se me están terminando",
+        "productos con poco stock",
+        "tengo que reponer algo",
+        "se me acabó algo",
+    ],
+    "ofertas": [
+        "qué ofertas hay guardadas",
+        "qué está más barato",
+        "mostrame los descuentos guardados",
+    ],
+    "presupuesto": [
+        "cuánta plata me queda este mes",
+        "cuánto gasté",
+        "cómo voy con el presupuesto",
+    ],
+}
 
 
 class OfferModelUnavailableError(RuntimeError):
@@ -69,6 +90,26 @@ def _e5_similarity(query: str, passage: str) -> float:
     query_embedding = _embed_e5_text("query", query)
     passage_embedding = _embed_e5_text("passage", passage)
     return float(query_embedding @ passage_embedding)
+
+
+def _best_intent(message: str) -> Tuple[Optional[str], float]:
+    query = _embed_e5_text("query", message)
+    best_intent = None
+    best_score = float("-inf")
+    for intent, examples in INTENTS.items():
+        for example in examples:
+            score = float(query @ _embed_e5_text("passage", example))
+            if score > best_score:
+                best_intent, best_score = intent, score
+    return best_intent, best_score
+
+
+def detect_intent(message: str) -> Tuple[Optional[str], float]:
+    """Return an E5 intent only when its similarity reaches the configured threshold."""
+    best_intent, best_score = _best_intent(message)
+    if best_score >= INTENT_MIN_SCORE:
+        return best_intent, best_score
+    return None, best_score
 
 
 def clean_query(q: str) -> str:
@@ -324,6 +365,16 @@ def answer_ai_chat_query(user_msg: str) -> str:
             for offer in offers[:10]
         ]
         return "Estas son las ofertas guardadas y sincronizadas:\n" + "\n".join(lines)
+
+    if USE_E5_INTENT:
+        try:
+            intent, _ = detect_intent(user_msg)
+            if intent:
+                return answer_ai_chat_query(intent)
+        except Exception:
+            import logging
+
+            logging.getLogger(__name__).exception("Falló la detección de intención con E5.")
         
     return (
         "¡Hola! Soy Boti House. Elegí una opción escribiendo el número o tocando un botón:\n"
