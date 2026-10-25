@@ -2,7 +2,7 @@
 
 ## Clase 10
 
-[clase_10/](clase_10/) contiene la ejecución de regresión lineal en scikit-learn, PyTorch y Keras y la investigación de exportación de modelo completo PyTorch; las predicciones personales están pendientes de revisión.
+[clase_10/](clase_10/) contiene el notebook ejecutado de regresión lineal en scikit-learn, PyTorch y Keras y la actividad de modelo completo de PyTorch; las predicciones personales señaladas siguen pendientes.
 
 ## Proyecto Expensa House
 
