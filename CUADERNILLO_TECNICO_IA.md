@@ -10,4 +10,4 @@
 
 [Abrir directamente el notebook](https://github.com/griseldablanco78-blip/Seminario2026/blob/Proyecto_Integrador/clase_10/Clase_10_Blanco_Griselda.ipynb)
 
-La entrega contiene el notebook con su recorrido ejecutado y la actividad final. Las predicciones personales aún señaladas como pendientes deben completarse y revisarse antes de presentar la entrega como terminada.
+La entrega contiene el notebook con su recorrido ejecutado y la actividad final. Las secciones de predicción explican los resultados observados; las anticipaciones personales previas no quedaron registradas en esta versión.

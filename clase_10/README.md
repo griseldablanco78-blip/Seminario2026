@@ -4,8 +4,10 @@ Griselda Blanco · Seminario de Actualización · IFTS N.º 18.
 
 **Rama:** `Proyecto_Integrador` · **Formato investigado:** modelo completo de PyTorch.
 
-[Notebook de la actividad](Clase_10_Blanco_Griselda.ipynb). Abrir en Google Colab, ejecutar las celdas en orden y conservar las salidas y las respuestas de la actividad final. La primera celda instala las dependencias; no hace falta instalar nada en la PC ni descargar archivos auxiliares.
+[Notebook de la actividad](Clase_10_Blanco_Griselda.ipynb).
 
-**Pendiente antes de entregar:** completar y revisar las predicciones personales señaladas en el notebook. La ejecución técnica y la investigación del formato están preparadas; las observaciones posteriores no sustituyen las anticipaciones personales. Se declara asistencia de IA en preparación y ejecución.
+El ejercicio documenta el entrenamiento y la evaluación de regresión lineal en scikit-learn, PyTorch y Keras. Se ejecutaron 50 celdas de código, se conservaron sus resultados y se verificó la recarga del modelo completo sin volver a entrenar. La instalación de dependencias está incluida en la primera celda de Colab.
 
-Esta carpeta conserva únicamente el notebook y este README. Los PDF y demás materiales complementarios se retiraron de la entrega.
+Las secciones de predicción explican los resultados observados. Las anticipaciones personales anteriores a la ejecución no quedaron registradas en esta versión. La investigación final describe el contenido del formato elegido, su carga, seguridad y aplicaciones.
+
+Esta carpeta contiene únicamente el notebook y este README.

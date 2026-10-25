@@ -2,9 +2,9 @@
 
 Copia revisable del backend modular FastAPI y del frontend que se prueban en la PC, actualizada el 25/10/2026. No reemplaza el experimento E5 de `Clase 7/TP_Integrador`: este comparador usa reglas y ofertas guardadas. No se publican datos reales del hogar, cuentas, contraseñas ni tickets.
 
-## Ejecutar en Windows
+## Entorno y referencia de ejecución local
 
-Desde esta carpeta:
+La aplicación utiliza un entorno virtual de Python. La secuencia de preparación y arranque local está representada por los siguientes comandos:
 
 ```powershell
 py -m venv .venv
@@ -13,7 +13,7 @@ py -m venv .venv
 .\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8002
 ```
 
-Abrir http://127.0.0.1:8002/. La primera administradora se crea en la ventana local. El registro público no otorga permisos automáticamente. Los datos iniciales del código son demostrativos: reemplazarlos por datos propios antes de usar para decisiones de compra. El OCR requiere Tesseract instalado; ver la documentación del proyecto principal para la configuración.
+La interfaz local responde en http://127.0.0.1:8002/. La primera administradora se crea en la ventana local. El registro público no otorga permisos automáticamente. Los datos iniciales del código son demostrativos: no representan precios de compras reales. El OCR requiere Tesseract instalado; la configuración está documentada en el proyecto principal.
 
 ## Cambios comprobados
 
@@ -29,8 +29,8 @@ Si no hay foto, se informa; si falta precio, no se inventa. Ratoneando necesita 
 
 ## Firebase y despliegue
 
-Ver [propuesta de Firebase](deploy/FIREBASE.md). No está conectado ni desplegado. Hosting puede servir el frontend, Authentication puede gestionar identidades y el backend necesita un entorno Python y almacenamiento durable. No cargar cuentas SQLite, `.env`, fotos familiares ni tickets a GitHub.
+La [propuesta de Firebase](deploy/FIREBASE.md) documenta la arquitectura evaluada. No está conectado ni desplegado. Hosting puede servir el frontend, Authentication puede gestionar identidades y el backend necesita un entorno Python y almacenamiento durable. Las cuentas SQLite, `.env`, fotos familiares y tickets no forman parte de esta publicación.
 
 ## Validación
 
-Para pruebas: instalar `httpx` y ejecutar `python -m unittest discover -s tests -v`. La notebook del integrador y la Clase 10 son entregas diferentes de esta web de producto.
+La verificación utilizó `httpx` y `python -m unittest discover -s tests -v`. La notebook del integrador y la Clase 10 son entregas diferentes de esta web de producto.
