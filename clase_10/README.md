@@ -2,6 +2,15 @@
 
 Griselda Blanco - Seminario de Actualización, IFTS N.º 18. Material de base de Cynthia M. Villagra.
 
+
+## Presentación de lo realizado
+
+[Presentación de resultados para la profesora y compañeros](Clase_10_Presentacion_resultados_Griselda_Blanco.pdf) explica el problema, la elección del modelo, las ejecuciones, las seis observaciones del entrenamiento y la comparación de ocho viviendas por precio total y precio por m².
+
+La extensión se reproduce desde esta carpeta con `python comparar_casas.py`, usando el entorno con las dependencias instaladas. El script carga exclusivamente el modelo y scaler de confianza creados por esta notebook: no vuelve a entrenarlos. Sus salidas están en [comparativa_casas/](comparativa_casas/): CSV, resumen JSON y gráfico.
+
+El criterio «óptima» se define como menor precio estimado por m² entre los escenarios comparados. También se muestra un ejemplo con presupuesto de US$160.000 y mínimo de 60 m²; son supuestos didácticos. No son viviendas reales ni una recomendación de compra. Las explicaciones de resultados observados no sustituyen las respuestas personales previas de la consigna.
+
 ## Archivos
 
 - `Clase_10_Blanco_Griselda.ipynb`: notebook técnicamente ejecutado, con salidas reales de scikit-learn, PyTorch y Keras.
