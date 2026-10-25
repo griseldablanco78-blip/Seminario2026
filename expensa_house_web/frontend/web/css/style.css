@@ -15,7 +15,7 @@
   --color-coral-soft: rgba(239, 68, 68, 0.12);
   --color-sky: #0284c7;
   --color-sky-soft: rgba(2, 132, 199, 0.12);
-  
+
   /* Backgrounds & Text */
   --bg-app: #f4f7f2;
   --bg-card: #ffffff;
@@ -25,7 +25,7 @@
   --text-main: #13241e;
   --text-muted: #5d6f67;
   --text-subtle: #8a9c94;
-  
+
   /* Shadows & Elevation */
   --shadow-sm: 0 1px 3px rgba(18, 56, 47, 0.05);
   --shadow-md: 0 4px 16px rgba(18, 56, 47, 0.08);

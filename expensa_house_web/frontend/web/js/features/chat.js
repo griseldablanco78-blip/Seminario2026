@@ -64,4 +64,3 @@ function setupBotiHouseChat() {
     if (e.key === 'Enter') sendMessage();
   });
 }
-

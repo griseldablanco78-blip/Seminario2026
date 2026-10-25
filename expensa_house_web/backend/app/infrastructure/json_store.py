@@ -112,7 +112,7 @@ def export_to_legacy_formats(data: Dict[str, Any]):
             })
         with open(STOCK_JSON, "w", encoding="utf-8") as f:
             json.dump(legacy_list, f, ensure_ascii=False, indent=2)
-            
+
         df = pd.DataFrame(legacy_list)
         df.to_csv(STOCK_CSV, index=False)
     except Exception as e:
@@ -129,7 +129,7 @@ def add_or_update_stock_item(item: Dict[str, Any]) -> Dict[str, Any]:
     db = load_db()
     if not item.get("id"):
         item["id"] = str(uuid.uuid4())
-    
+
     # Check if exists
     existing_idx = next((i for i, x in enumerate(db["stock"]) if x["id"] == item["id"]), None)
     if existing_idx is not None:
@@ -138,7 +138,7 @@ def add_or_update_stock_item(item: Dict[str, Any]) -> Dict[str, Any]:
     else:
         db["stock"].append(item)
         saved_item = item
-        
+
     # Auto-sync with shopping list if critical
     check_and_sync_shopping_for_stock(db, saved_item)
     save_db(db)
@@ -148,7 +148,7 @@ def add_or_update_stock_item(item: Dict[str, Any]) -> Dict[str, Any]:
 def check_and_sync_shopping_for_stock(db: Dict[str, Any], stock_item: Dict[str, Any]):
     stock_qty = stock_item.get("stockQuantity", 0)
     name = stock_item.get("name", "").strip().lower()
-    
+
     if stock_qty <= 1:
         # Check if already in shopping
         exists = any(s.get("name", "").strip().lower() == name for s in db["shopping"])
@@ -238,12 +238,12 @@ def move_shopping_to_stock(item_id: str) -> Optional[Dict[str, Any]]:
     shop_item = next((x for x in db["shopping"] if x["id"] == item_id), None)
     if not shop_item:
         return None
-    
+
     # Check if item exists in stock
     name = shop_item.get("name", "").strip().lower()
     brand = shop_item.get("brand", "").strip().lower()
     qty = shop_item.get("quantity", 1)
-    
+
     existing = next((s for s in db["stock"] if s.get("name", "").strip().lower() == name and s.get("brand", "").strip().lower() == brand), None)
     if existing:
         existing["stockQuantity"] = existing.get("stockQuantity", 0) + qty
@@ -261,7 +261,7 @@ def move_shopping_to_stock(item_id: str) -> Optional[Dict[str, Any]]:
         }
         db["stock"].append(new_item)
         result_stock = new_item
-        
+
     db["shopping"] = [x for x in db["shopping"] if x["id"] != item_id]
     save_db(db)
     return result_stock
@@ -291,7 +291,7 @@ def add_expense(expense: Dict[str, Any]) -> Dict[str, Any]:
     if not expense.get("timestamp"):
         expense["timestamp"] = int(time.time() * 1000)
     db["expenses"].insert(0, expense)
-    
+
     # Actualizar totalSpent en user_prefs
     db["user_prefs"]["totalSpent"] = db["user_prefs"].get("totalSpent", 0.0) + expense.get("amount", 0.0)
     save_db(db)

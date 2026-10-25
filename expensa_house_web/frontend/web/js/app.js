@@ -586,7 +586,7 @@ async function moveShoppingToStock(id) {
     const res = await fetch(`/api/shopping/${id}/move-to-stock`, { method: 'POST' });
     const result = await res.json();
     state.shopping = state.shopping.filter(s => s.id !== id);
-    
+
     // Actualizar o insertar en stock local
     const existing = state.stock.find(s => s.id === result.stock_item.id);
     if (existing) {
@@ -620,7 +620,7 @@ function renderBudgetAndExpenses() {
   const pct = budget > 0 ? Math.min(100, Math.round((spent / budget) * 100)) : 0;
 
   document.getElementById('budget-total-display').textContent = `$${budget.toLocaleString('es-AR')}`;
-  
+
   const remainingDisplay = document.getElementById('budget-remaining-display');
   remainingDisplay.textContent = `$${remaining.toLocaleString('es-AR')}`;
   remainingDisplay.style.color = remaining < 0 ? 'var(--color-coral)' : 'var(--color-leaf)';
