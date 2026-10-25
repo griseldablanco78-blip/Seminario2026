@@ -28,3 +28,7 @@ La prueba de recarga del modelo completo devolvió la misma predicción, sin nue
 Las estimaciones y celdas «Tu respuesta» están expresamente pendientes. No fueron completadas como si Griselda hubiera anticipado resultados. Escribir las predicciones personales, revisar la investigación con palabras propias y repetir las celdas correspondientes antes de entregar. El notebook se ejecutó con asistencia de IA para preparar y comprobar el código; se declara esta asistencia y no se presenta como actividad personal terminada.
 
 Fuentes: https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html y https://keras.io/getting_started/.
+
+## Guía de estudio
+
+[Guía paso a paso en PDF](Clase_10_Guia_paso_a_paso_Griselda.pdf): Colab, comandos de Windows, modelos y bibliotecas, explicación de las seis predicciones personales y pasos de exportación.
