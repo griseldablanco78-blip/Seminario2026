@@ -91,3 +91,12 @@ El umbral E5 está configurado conservadoramente en `0.88`: en la muestra de cal
    Para probar con un telefono fisico en la misma red Wi-Fi, reemplazar `10.0.2.2` por la direccion IPv4 local de la PC. Conservar la barra final. Volver a sincronizar Gradle y ejecutar la variante `debug`.
 
 La variante `debug` permite HTTP para esta prueba local. `0.0.0.0` permite que otros dispositivos de la red alcancen el servidor; para usarlo en Internet hacen falta HTTPS, autenticacion y almacenamiento adecuado.
+
+
+## Documentación revisada - 25/10/2026
+
+- [Informe revisado (7 páginas)](TP_Blanco_Griselda_revisado.pdf).
+- [Presentación revisada (8 páginas)](Expensa_House_Presentacion_revisada.pdf).
+- [Notebook con 11 consultas y resultados guardados](TP_Integrador/notebook/TP_Blanco_Griselda.ipynb).
+
+Los PDF anteriores se conservan como versiones históricas. La revisión aclara los resultados, diferencias entre versiones y los pendientes de deploy. La versión web de producto se conserva en [expensa_house_web](../expensa_house_web/); no sustituye silenciosamente el experimento E5 de Clase 7. La actividad de entrenamiento y exportación está en [clase_10](../clase_10/).
