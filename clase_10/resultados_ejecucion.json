@@ -1,0 +1,32 @@
+{
+  "metricas_test": {
+    "LinearRegression": {
+      "rmse_miles_usd": 4.423461859353416,
+      "r2": 0.9819550570561854
+    },
+    "SGDRegressor": {
+      "rmse_miles_usd": 4.384624599419372,
+      "r2": 0.9822705292529285
+    },
+    "PyTorch": {
+      "rmse_miles_usd": 4.423459644973334,
+      "r2": 0.9819550751227376
+    },
+    "Keras": {
+      "rmse_miles_usd": 4.423459644973334,
+      "r2": 0.9819550751227376
+    }
+  },
+  "formato_elegido": "modelo completo PyTorch",
+  "recarga_misma_prediccion": true,
+  "prediccion_casa_65m2_balcon_sin_ascensor": 125.61763000488281,
+  "predicciones_personales": "pendientes",
+  "keras_backend": "torch",
+  "versiones": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.1",
+    "torch": "2.14.1",
+    "keras": "3.15.1"
+  }
+}
