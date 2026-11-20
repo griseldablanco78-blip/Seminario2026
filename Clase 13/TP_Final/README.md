@@ -2,6 +2,14 @@
 
 En este trabajo entrené un clasificador que recibe cuatro medidas de una flor y estima cuál de las tres especies de Iris se parece más a ellas.
 
+## Entrega y enlaces
+
+- **Informe final (PDF):** [TPF_Blanco_Griselda.pdf](https://drive.google.com/file/d/1HXkK2IbVrXEFQHtaEI6kL3CrDi0Gs5MN/view?usp=sharing)
+- **Frontend:** [Jardín de Datos: Iris](https://jardin-de-datos-iris.vercel.app/)
+- **Documentación de la API (Swagger):** [Abrir /docs](https://jardin-de-datos-api.onrender.com/docs)
+- **Código fuente:** [Carpeta TP_Final en GitHub](https://github.com/griseldablanco78-blip/Seminario2026/tree/Proyecto_Integrador/Clase%2013/TP_Final)
+- **Presentación:** [TPF_Blanco_Griselda.pptx](https://github.com/griseldablanco78-blip/Seminario2026/blob/Proyecto_Integrador/Clase%2013/TP_Final/TPF_Blanco_Griselda.pptx)
+
 ## Decisiones técnicas
 
 - **Elegí Iris**, incluido en scikit-learn, para no depender de una descarga externa. Tiene cuatro medidas numéricas y tres especies.
