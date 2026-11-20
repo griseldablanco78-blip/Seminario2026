@@ -104,7 +104,7 @@ Los campos faltantes, tipos incorrectos y medidas fuera del rango observado se r
 - El frontend apunta a `https://jardin-de-datos-api.onrender.com`. La variable `FRONTEND_ORIGINS` permite los dos dominios del proyecto. En desarrollo también habilito `localhost:5500` y `127.0.0.1:5500`.
 - Probé en Render `GET /health` (200) y `POST /predecir` con medidas válidas (200, especie y probabilidades). La instancia gratuita puede suspenderse por inactividad y demorar al despertar.
 
-Vercel tiene activada protección de acceso en los dominios de vista previa `vercel.app`; el dominio puede pedir autenticación a visitantes externos. Render y su documentación OpenAPI sí responden públicamente.
+La web abre públicamente sin iniciar sesión. Comprobé desde el formulario que se conecta con la API de Render y muestra la predicción con sus probabilidades.
 
 ## Errores reales y cómo los resolví
 
