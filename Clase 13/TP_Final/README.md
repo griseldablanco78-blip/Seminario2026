@@ -10,7 +10,7 @@ En este trabajo entrené un clasificador que recibe cuatro medidas de una flor y
 - **Usé scikit-learn y `joblib`** para entrenar y guardar el modelo, como pide la consigna.
 - **Usé FastAPI y Pydantic** para exponer y validar las rutas. FastAPI genera `/docs` y `/openapi.json` a partir del código.
 - **Usé HTML, CSS y JavaScript** para construir el formulario y los gráficos sin sumar otro framework de frontend.
-- **Elegí Vercel para el sitio y Render para la API** porque ya conozco Vercel y Render puede ejecutar el backend FastAPI como servicio web. En local limité CORS a mis dos orígenes de desarrollo; después del deploy agregaré el dominio de Vercel.
+- **Elegí Vercel para el sitio y Render para la API** porque ya conozco Vercel y Render puede ejecutar el backend FastAPI como servicio web. Configuré CORS con los dos dominios de Vercel usados por el proyecto.
 
 ## Estructura
 
@@ -97,13 +97,14 @@ Respuesta `200` (las cifras dependen del modelo entrenado):
 
 Los campos faltantes, tipos incorrectos y medidas fuera del rango observado se rechazan con `422`. Durante mis pruebas locales, la entrada sin `petal_width_cm`, la entrada con `"petal_width_cm": "mucho"` y una medida de sépalo de `8.0 cm` devolvieron `422`. Un decimal válido de `5.15 cm` fue aceptado. También comprobé que una ruta inexistente responde `404`, que usar `GET` en `/predecir` responde `405` y que la preflight CORS local responde `200`. No observé una respuesta `500` en las pruebas realizadas.
 
-## Publicación prevista
+## Publicación
 
-- Frontend: Vercel, como sitio estático desde `TP_Final/app/frontend`.
-- Backend: Render, como Web Service desde `TP_Final/app/backend`.
-- En Render, definiré `FRONTEND_ORIGINS` con el dominio exacto de Vercel. Durante el desarrollo habilito `localhost:5500` y `127.0.0.1:5500`.
+- Frontend: [Jardín de Datos en Vercel](https://jardin-de-datos-iris.vercel.app/), servido como sitio estático.
+- API en Render: [estado](https://jardin-de-datos-api.onrender.com/health), [Swagger](https://jardin-de-datos-api.onrender.com/docs) y [OpenAPI](https://jardin-de-datos-api.onrender.com/openapi.json).
+- El frontend apunta a `https://jardin-de-datos-api.onrender.com`. La variable `FRONTEND_ORIGINS` permite los dos dominios del proyecto. En desarrollo también habilito `localhost:5500` y `127.0.0.1:5500`.
+- Probé en Render `GET /health` (200) y `POST /predecir` con medidas válidas (200, especie y probabilidades). La instancia gratuita puede suspenderse por inactividad y demorar al despertar.
 
-Render puede suspender el servicio gratuito después de un período sin tráfico, de modo que la primera petición posterior puede tardar más. En el informe final completaré el enlace y el comportamiento que observe en el deploy real.
+Vercel tiene activada protección de acceso en los dominios de vista previa `vercel.app`; el dominio puede pedir autenticación a visitantes externos. Render y su documentación OpenAPI sí responden públicamente.
 
 ## Errores reales y cómo los resolví
 
