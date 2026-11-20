@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: jardin-de-datos-api
+    runtime: python
+    plan: free
+    rootDir: .
+    buildCommand: pip install -r app/backend/requirements.txt
+    startCommand: uvicorn main:app --app-dir app/backend --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: FRONTEND_ORIGINS
+        sync: false

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8ed">
+  <meta name="description" content="Explorá las medidas de una flor y conocé qué especie de Iris estima el modelo.">
+  <title>Jardín de Datos | Iris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Jardín de Datos, inicio">
+      <span class="brand-mark" aria-hidden="true">✿</span>
+      <span>jardín<span class="brand-light"> de datos</span></span>
+    </a>
+    <div class="api-status" id="api-status" role="status">
+      <span class="status-dot"></span><span class="status-text">Conectando con la API…</span>
+    </div>
+  </header>
+
+  <main id="inicio">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> EXPLORADOR BOTÁNICO · MACHINE LEARNING</p>
+        <h1 id="page-title">Una flor.<br><span>Cuatro medidas.</span><br><em>Tres posibilidades.</em></h1>
+        <p class="hero-intro">Conocé qué especie de iris estima el modelo a partir del largo y ancho de sus pétalos y sépalos.</p>
+        <div class="hero-facts" aria-label="Datos del proyecto">
+          <span><b>150</b> flores observadas</span><span class="fact-divider"></span><span><b>3</b> especies</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="art-halo"></div>
+        <svg class="iris-illustration" viewBox="0 0 380 390" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M190 366C187 301 196 243 193 178" stroke="#2A7A51" stroke-width="8" stroke-linecap="round"/>
+          <path d="M192 294C146 250 112 253 104 264C132 302 160 312 192 304" fill="#5BA66A"/>
+          <path d="M193 276C225 227 264 221 277 234C255 273 222 289 194 287" fill="#78B96F"/>
+          <path d="M193 367C157 353 132 354 111 373" stroke="#6A9F55" stroke-width="6" stroke-linecap="round"/>
+          <path d="M193 365C230 348 260 351 280 370" stroke="#6A9F55" stroke-width="6" stroke-linecap="round"/>
+          <path d="M193 367C183 342 183 320 191 301" stroke="#84B66B" stroke-width="4" stroke-linecap="round"/>
+          <path d="M190 165C153 125 136 71 165 43C186 57 194 98 190 165Z" fill="#8051BC"/>
+          <path d="M192 164C189 111 209 56 241 43C256 69 232 127 192 164Z" fill="#A76BD2"/>
+          <path d="M188 165C137 159 91 130 99 100C132 98 169 126 188 165Z" fill="#5C45A4"/>
+          <path d="M194 164C220 122 264 97 287 116C281 149 236 170 194 164Z" fill="#704FB4"/>
+          <path d="M191 161C179 207 150 231 126 213C126 184 152 164 191 161Z" fill="#E2748D"/>
+          <path d="M194 163C224 178 243 214 226 235C197 229 187 194 194 163Z" fill="#EB8495"/>
+          <path d="M187 161C172 167 158 181 158 194C174 199 185 187 187 161Z" fill="#F4C45E"/>
+          <path d="M196 161C209 167 218 180 216 192C202 194 195 182 196 161Z" fill="#F6D16D"/>
+          <circle cx="191" cy="164" r="6" fill="#F7DB8C"/>
+          <path d="M194 35C201 21 213 12 229 9" stroke="#BD9BE0" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="91" cy="83" r="5" fill="#ECA4AD"/><circle cx="296" cy="76" r="4" fill="#88B56D"/>
+          <circle cx="287" cy="200" r="6" fill="#F0BF59"/><circle cx="83" cy="217" r="4" fill="#9D71CC"/>
+        </svg>
+        <span class="art-label label-top">iris · setosa</span>
+        <span class="art-label label-bottom">una clasificación en flor</span>
+      </div>
+      <div class="hero-wave" aria-hidden="true"></div>
+    </section>
+
+    <section class="workspace" aria-label="Formulario y resultados">
+      <div class="section-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> MEDIDAS DE TU FLOR</p><h2>Ingresá las medidas de la flor</h2></div>
+          <button class="sample-button" id="sample-button" type="button"><span aria-hidden="true">✦</span> Cargar medidas de ejemplo</button>
+      </div>
+
+      <form id="prediction-form" class="measurement-grid" novalidate>
+        <label class="measurement-card card-green" for="sepal-length">
+          <span class="measure-index">01</span><span class="measure-icon" aria-hidden="true">↔</span>
+          <span class="measure-name">Largo del sépalo</span><span class="measure-unit">Rango: 4,3 a 7,9 cm</span>
+          <span class="input-wrap"><input id="sepal-length" name="sepal_length_cm" type="number" min="4.3" max="7.9" step="any" value="5.1" required><span>cm</span></span>
+        </label>
+        <label class="measurement-card card-lilac" for="sepal-width">
+          <span class="measure-index">02</span><span class="measure-icon" aria-hidden="true">↕</span>
+          <span class="measure-name">Ancho del sépalo</span><span class="measure-unit">Rango: 2,0 a 4,4 cm</span>
+          <span class="input-wrap"><input id="sepal-width" name="sepal_width_cm" type="number" min="2" max="4.4" step="any" value="3.5" required><span>cm</span></span>
+        </label>
+        <label class="measurement-card card-coral" for="petal-length">
+          <span class="measure-index">03</span><span class="measure-icon" aria-hidden="true">↔</span>
+          <span class="measure-name">Largo del pétalo</span><span class="measure-unit">Rango: 1,0 a 6,9 cm</span>
+          <span class="input-wrap"><input id="petal-length" name="petal_length_cm" type="number" min="1" max="6.9" step="any" value="1.4" required><span>cm</span></span>
+        </label>
+        <label class="measurement-card card-yellow" for="petal-width">
+          <span class="measure-index">04</span><span class="measure-icon" aria-hidden="true">↕</span>
+          <span class="measure-name">Ancho del pétalo</span><span class="measure-unit">Rango: 0,1 a 2,5 cm</span>
+          <span class="input-wrap"><input id="petal-width" name="petal_width_cm" type="number" min="0.1" max="2.5" step="any" value="0.2" required><span>cm</span></span>
+        </label>
+        <div class="submit-row">
+          <p class="form-note"><span aria-hidden="true">✿</span> Las medidas se expresan en centímetros.</p>
+          <button class="predict-button" id="predict-button" type="submit"><span>Descubrir la especie</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+        </div>
+      </form>
+      <div id="form-message" class="form-message" role="alert" hidden></div>
+
+      <section id="result-section" class="results" hidden aria-live="polite">
+        <div class="results-header"><div><p class="eyebrow"><span class="eyebrow-line"></span> RESULTADO DEL MODELO</p><h2>La especie que más se parece</h2></div><span class="result-chip"><span class="status-dot"></span> Predicción lista</span></div>
+        <div class="result-layout">
+          <div class="species-panel">
+            <div class="species-cards" id="species-cards"></div>
+            <div class="chart-card probability-card">
+              <div class="chart-heading"><div><p class="chart-kicker">CLASIFICACIÓN</p><h3>Probabilidades estimadas</h3></div><span class="chart-icon lilac-icon" aria-hidden="true">◒</span></div>
+              <div id="probability-chart" class="probability-chart"></div>
+              <p class="chart-caption">Estimaciones del modelo; no son certezas biológicas.</p>
+            </div>
+          </div>
+          <div class="chart-card profile-card">
+            <div class="chart-heading"><div><p class="chart-kicker">COMPARACIÓN DE MEDIDAS</p><h3>Así se distinguen las especies</h3></div><span class="chart-icon green-icon" aria-hidden="true">✳</span></div>
+            <p class="chart-subtitle">Cada línea muestra las medidas promedio de una especie, en centímetros.</p>
+            <div id="profile-chart" class="profile-chart" role="img" aria-label="Gráfico lineal de las medidas promedio para cada especie"></div>
+            <div class="legend profile-legend" aria-label="Leyenda de especies">
+              <span><i class="legend-line line-setosa"></i> Setosa</span><span><i class="legend-line line-versicolor"></i> Versicolor</span><span><i class="legend-line line-virginica"></i> Virginica</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <section class="species-section" aria-labelledby="species-heading">
+      <div class="section-heading species-heading"><div><p class="eyebrow"><span class="eyebrow-line"></span> TRES ESPECIES</p><h2 id="species-heading">Un pequeño jardín de posibilidades</h2></div><p class="species-intro">Conocé las tres especies que puede estimar el modelo.</p></div>
+      <div class="species-guide">
+        <article class="guide-card guide-setosa"><span class="guide-number">01</span><div class="guide-flower flower-purple" aria-hidden="true">✿</div><div><h3>Iris setosa</h3><p>En estas flores, los pétalos suelen ser más cortos.</p></div><span class="guide-arrow" aria-hidden="true">↗</span></article>
+        <article class="guide-card guide-versicolor"><span class="guide-number">02</span><div class="guide-flower flower-coral" aria-hidden="true">✿</div><div><h3>Iris versicolor</h3><p>Sus medidas suelen ubicarse entre las otras dos especies.</p></div><span class="guide-arrow" aria-hidden="true">↗</span></article>
+        <article class="guide-card guide-virginica"><span class="guide-number">03</span><div class="guide-flower flower-yellow" aria-hidden="true">✿</div><div><h3>Iris virginica</h3><p>En estas flores, los pétalos suelen ser más grandes.</p></div><span class="guide-arrow" aria-hidden="true">↗</span></article>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer"><a class="brand footer-brand" href="#inicio"><span class="brand-mark" aria-hidden="true">✿</span><span>jardín<span class="brand-light"> de datos</span></span></a><span>Una exploración de clasificación con Iris</span><a href="#inicio" class="back-top">Volver arriba ↑</a></footer>
+  <script src="config.js"></script>
+  <script src="iris_data.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
